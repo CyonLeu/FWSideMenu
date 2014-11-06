@@ -1,4 +1,10 @@
-# RESideMenu
+
+#SideMenu
+
+basic RESideMenu [https://github.com/romaonthego/RESideMenu](https://github.com/romaonthego/RESideMenu)
+
+## Special: Add 3D side , blurred content effect.
+
 
 iOS 7 style side menu with parallax effect inspired by Dribbble shots ([first](http://dribbble.com/shots/1116265-Instasave-iPhone-App) and [second](http://dribbble.com/shots/1114754-Social-Feed-iOS7)).
 
@@ -8,9 +14,9 @@ Since version 4.0 you can add menu view controllers on both left and right sides
 <img src="http://nanny.netease.com/gzliuyong2014/residemenu/raw/master/menuEffect.gif?2" alt="RESideMenu Screenshot" width="320" height="568" />-->
 
 # Add 3D side and gauss image effect
-![Alt text](http://nanny.netease.com/gzliuyong2014/residemenu/raw/master/Screenshot.png)
+![Alt text](https://raw.githubusercontent.com/CyonLeu/FWSideMenu/master/Screenshot.png)
 
-![Alt text](http://nanny.netease.com/gzliuyong2014/residemenu/raw/master/menuEffect.gif)	
+![Alt text](https://raw.githubusercontent.com/CyonLeu/FWSideMenu/master/menuEffect.gif)	
 
 
 

@@ -1,10 +1,10 @@
 Pod::Spec.new do |s|
-  s.name        = 'RESideMenu'
+  s.name        = 'FWSideMenu'
   s.version     = '4.1.3'
-  s.authors     = { 'Roman Efimov' => 'romefimov@gmail.com' }
-  s.homepage    = 'https://github.com/romaonthego/RESideMenu'
+  s.authors     = { 'CyonLeu' => 'cyonleu@126.com' }
+  s.homepage    = 'https://github.com/CyonLeu/FWSideMenu'
   s.summary     = 'iOS 7 style side menu with parallax effect.'
-  s.source      = { :git => 'git@nanny.netease.com:gzliuyong2014/residemenu.git',
+  s.source      = { :git => 'https://github.com/CyonLeu/FWSideMenu.git',
                     :tag => s.version.to_s }
   s.license     = { :type => "MIT", :file => "LICENSE" }
 
