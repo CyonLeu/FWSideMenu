@@ -1,0 +1,10 @@
+PODS:
+  - UIImageEffects (0.0.1)
+
+DEPENDENCIES:
+  - UIImageEffects (~> 0.0.1)
+
+SPEC CHECKSUMS:
+  UIImageEffects: 69cd1e1f8fc4042a8fefcf4a0727cbf213e4dbfb
+
+COCOAPODS: 0.34.4
