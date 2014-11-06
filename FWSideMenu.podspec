@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
   s.version     = '4.1.3'
   s.authors     = { 'CyonLeu' => 'cyonleu@126.com' }
   s.homepage    = 'https://github.com/CyonLeu/FWSideMenu'
-  s.summary     = 'iOS 7 style side menu with parallax effect.'
+  s.summary     = 'basic RESideMenu,Special add 3D side , blurred content effect.'
   s.source      = { :git => 'https://github.com/CyonLeu/FWSideMenu.git',
                     :tag => s.version.to_s }
   s.license     = { :type => "MIT", :file => "LICENSE" }
