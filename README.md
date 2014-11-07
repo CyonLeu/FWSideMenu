@@ -8,6 +8,8 @@ basic RESideMenu [https://github.com/romaonthego/RESideMenu](https://github.com/
 
 iOS 7 style side menu with parallax effect inspired by Dribbble shots ([first](http://dribbble.com/shots/1116265-Instasave-iPhone-App) and [second](http://dribbble.com/shots/1114754-Social-Feed-iOS7)).
 
+### If you are insteresting to Android , you can click [Android SideMenu](https://github.com/kyze8439690/ResideLayout)
+
 Since version 4.0 you can add menu view controllers on both left and right sides of your content view controller.
 
 <!--<img src="https://github.com/romaonthego/RESideMenu/raw/master/Screenshot.png" alt="RESideMenu Screenshot" width="400" height="568" />
