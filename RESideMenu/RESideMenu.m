@@ -246,10 +246,12 @@ const CGFloat cMinContentWidth = 120.f;
     self.contentViewContainer.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.contentViewContainer.backgroundColor = [UIColor greenColor];
     
-    [self addChildViewController:self.contentViewController];
-    self.contentViewController.view.frame = self.view.bounds;
-    [self.contentViewContainer addSubview:self.contentViewController.view];
-    [self.contentViewController didMoveToParentViewController:self];
+    if (self.contentViewController) {
+        [self addChildViewController:self.contentViewController];
+        self.contentViewController.view.frame = self.view.bounds;
+        [self.contentViewContainer addSubview:self.contentViewController.view];
+        [self.contentViewController didMoveToParentViewController:self];
+    }
     
     self.menuViewContainer.alpha = 0;
     if (self.scaleBackgroundImageView)
@@ -690,11 +692,11 @@ const CGFloat cMinContentWidth = 120.f;
                 contentAlpha = 1.0;
             }
             else {
-                if (fabsf(point.x) < minWidth) {
-                    contentAlpha = fabsf(point.x) / screenSize.width;
+                if (fabs(point.x) < minWidth) {
+                    contentAlpha = fabs(point.x) / screenSize.width;
                 }
                 else {
-                    contentAlpha = (fabsf(point.x) + minWidth) / screenSize.width;
+                    contentAlpha = (fabs(point.x) + minWidth) / screenSize.width;
                 }
             }
         } else {
@@ -703,11 +705,11 @@ const CGFloat cMinContentWidth = 120.f;
                 contentAlpha = 1.0;
             }
             else {
-                if (fabsf(point.x) < minWidth) {
-                    contentAlpha = fabsf(point.x) / screenSize.width;
+                if (fabs(point.x) < minWidth) {
+                    contentAlpha = fabs(point.x) / screenSize.width;
                 }
                 else {
-                    contentAlpha = (fabsf(point.x) + minWidth) / screenSize.width;
+                    contentAlpha = (fabs(point.x) + minWidth) / screenSize.width;
                 }
             }
         }
@@ -766,14 +768,14 @@ const CGFloat cMinContentWidth = 120.f;
                     contentAlpha = 1.0;
                 }
                 else {
-                    translationX = maxContentX - fabsf(point.x);
-                    if (fabsf(point.x) > minWidth) {
+                    translationX = maxContentX - fabs(point.x);
+                    if (fabs(point.x) > minWidth) {
                         contentAlpha = translationX / screenSize.width;
                     }
                     else {
                         contentAlpha = (translationX + minWidth)/ screenSize.width;
                     }
-                    delta = fabsf(translationX) / (screenSize.width - minWidth);
+                    delta = fabs(translationX) / (screenSize.width - minWidth);
  
                 }
                 m43Sign = 1;
@@ -784,14 +786,14 @@ const CGFloat cMinContentWidth = 120.f;
                     contentAlpha = 1.0;
                 }
                 else {
-                    translationX = - maxContentX + fabsf(point.x);
-                    if (fabsf(point.x) > minWidth) {
-                        contentAlpha = fabsf(translationX)  / screenSize.width;
+                    translationX = - maxContentX + fabs(point.x);
+                    if (fabs(point.x) > minWidth) {
+                        contentAlpha = fabs(translationX)  / screenSize.width;
                     }
                     else {
-                        contentAlpha = (fabsf(translationX) + minWidth) / screenSize.width;
+                        contentAlpha = (fabs(translationX) + minWidth) / screenSize.width;
                     }
-                    delta = fabsf(translationX) / (screenSize.width - minWidth);
+                    delta = fabs(translationX) / (screenSize.width - minWidth);
 
                 }
                 m43Sign = - 1;
@@ -815,10 +817,10 @@ const CGFloat cMinContentWidth = 120.f;
             else {
                 m43Sign = 1;
             }
-            delta = fabsf(point.x) / (screenSize.width - minWidth);
+            delta = fabs(point.x) / (screenSize.width - minWidth);
         }
         
-        if (fabsf(translationX) > screenSize.width) {
+        if (fabs(translationX) > screenSize.width) {
             if (translationX < 0) {
                 translationX = - screenSize.width;
             }
@@ -862,7 +864,7 @@ const CGFloat cMinContentWidth = 120.f;
         
         //change transfor3D
         if (shouldChangeTransform) {
-            CGFloat blurWidth = fabsf(translationX);
+            CGFloat blurWidth = fabs(translationX);
             CGFloat ratio = blurWidth / self.view.frame.size.width;
             CGFloat angle = ratio * ((M_PI / 180) * 60);
             
@@ -937,10 +939,6 @@ const CGFloat cMinContentWidth = 120.f;
 
 - (void)setContentViewController:(UIViewController *)contentViewController
 {
-    if (!_contentViewController) {
-        _contentViewController = contentViewController;
-        return;
-    }
     [self __hideViewController:_contentViewController];
     _contentViewController = contentViewController;
     
@@ -958,10 +956,6 @@ const CGFloat cMinContentWidth = 120.f;
 
 - (void)setLeftMenuViewController:(UIViewController *)leftMenuViewController
 {
-    if (!_leftMenuViewController) {
-        _leftMenuViewController = leftMenuViewController;
-        return;
-    }
     [self __hideViewController:_leftMenuViewController];
     _leftMenuViewController = leftMenuViewController;
    
@@ -977,10 +971,6 @@ const CGFloat cMinContentWidth = 120.f;
 
 - (void)setRightMenuViewController:(UIViewController *)rightMenuViewController
 {
-    if (!_rightMenuViewController) {
-        _rightMenuViewController = rightMenuViewController;
-        return;
-    }
     [self __hideViewController:_rightMenuViewController];
     _rightMenuViewController = rightMenuViewController;
     
