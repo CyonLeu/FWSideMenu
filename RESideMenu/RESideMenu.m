@@ -28,11 +28,8 @@
 #import "RECommonFunctions.h"
 #import <UIImageEffects/UIImage+ImageEffects.h>
 
-const NSUInteger cMaxInradius = 25;
-const NSUInteger cMinInradius = 1;
-const CGFloat cBlurDeltaFactor = 1.8;
-const CGFloat cMaxRotateAngel = M_PI / 180 * 60;
-const CGFloat cMinContentWidth = 120.f;
+const CGFloat cMaxRotateAngel = M_PI / 180 * 90; ///rotate angle for '_contentViewController' when side menu is open
+const CGFloat cMinContentWidth = 180.f;
 
 @interface RESideMenu ()
 
@@ -180,16 +177,10 @@ const CGFloat cMinContentWidth = 120.f;
     return image;
 }
 
-- (void)addContentBlurredImage:(NSUInteger)blurRadius
+- (void)addContentBlurredImage
 {
     UIImage *sourceImage = [self imageSnapshotFromView:self.contentViewController.view];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        
-//        UIImage *blurredImage = [sourceImage applyBlurWithRadius:blurRadius
-//                                                 tintColor:nil
-//                                     saturationDeltaFactor:cBlurDeltaFactor
-//                                                 maskImage:nil];
-       
         UIImage *blurredImage = [sourceImage applyLightEffect];
         dispatch_async(dispatch_get_main_queue(), ^{
             self.contentImageView.image = blurredImage;
@@ -246,10 +237,12 @@ const CGFloat cMinContentWidth = 120.f;
     self.contentViewContainer.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
     self.contentViewContainer.backgroundColor = [UIColor greenColor];
     
-    [self addChildViewController:self.contentViewController];
-    self.contentViewController.view.frame = self.view.bounds;
-    [self.contentViewContainer addSubview:self.contentViewController.view];
-    [self.contentViewController didMoveToParentViewController:self];
+    if (self.contentViewController) {
+        [self addChildViewController:self.contentViewController];
+        self.contentViewController.view.frame = self.view.bounds;
+        [self.contentViewContainer addSubview:self.contentViewController.view];
+        [self.contentViewController didMoveToParentViewController:self];
+    }
     
     self.menuViewContainer.alpha = 0;
     if (self.scaleBackgroundImageView)
@@ -300,29 +293,23 @@ const CGFloat cMinContentWidth = 120.f;
     [self.view.window endEditing:YES];
     [self __addContentButton];
     [self __updateContentViewShadow];
-//    [self __resetContentViewScale];
     
     [UIView animateWithDuration:self.animationDuration animations:^{
-//        if (self.scaleContentView) {
-//            self.contentViewContainer.transform = CGAffineTransformMakeScale(self.contentViewScaleValue, self.contentViewScaleValue);
-//        } else {
-//            self.contentViewContainer.transform = CGAffineTransformIdentity;
-//        }
         
         CGFloat minWidth = CGRectGetWidth(self.view.bounds) - cMinContentWidth;
         CGFloat ratio = minWidth / CGRectGetWidth(self.view.bounds);
-        CGFloat angle = ratio * ((M_PI / 180) * 60);
+        CGFloat angle = ratio * cMaxRotateAngel;
         self.contentViewContainer.layer.zPosition = 100;
         
         CATransform3D translation = CATransform3DMakeTranslation(minWidth, 0, 0);
             translation.m34 = 1 / 700.f;
     
         CATransform3D scale = CATransform3DScale(translation, 1, self.contentViewScaleValue, 1);
+        
         CATransform3D rotate = CATransform3DMakeRotation(angle, 0, 1, 0);
         CATransform3D mat = CATransform3DConcat(rotate, scale);
-        self.contentViewContainer.layer.transform = mat;
         
-//        self.contentViewContainer.center = CGPointMake((UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation]) ? self.contentViewInLandscapeOffsetCenterX + CGRectGetHeight(self.view.frame) : self.contentViewInPortraitOffsetCenterX + CGRectGetWidth(self.view.frame)), self.contentViewContainer.center.y);
+        self.contentViewContainer.layer.transform = mat;
 
         self.menuViewContainer.alpha = 1.0f;
         self.menuViewContainer.transform = CGAffineTransformIdentity;
@@ -331,7 +318,7 @@ const CGFloat cMinContentWidth = 120.f;
         
         if (self.needBlurredImageEffect) {
             self.contentImageView.hidden = NO;
-            [self addContentBlurredImage:cMaxInradius];
+            [self addContentBlurredImage];
         }
     } completion:^(BOOL finished) {
         [self __addContentViewControllerMotionEffects];
@@ -357,22 +344,14 @@ const CGFloat cMinContentWidth = 120.f;
     [self.view.window endEditing:YES];
     [self __addContentButton];
     [self __updateContentViewShadow];
-//    [self __resetContentViewScale];
     
     [[UIApplication sharedApplication] beginIgnoringInteractionEvents];
     [UIView animateWithDuration:self.animationDuration animations:^{
-//        if (self.scaleContentView) {
-//            self.contentViewContainer.transform = CGAffineTransformMakeScale(self.contentViewScaleValue, self.contentViewScaleValue);
-//        } else {
-//            self.contentViewContainer.transform = CGAffineTransformIdentity;
-//        }
-        
-//        self.contentViewContainer.center = CGPointMake((UIInterfaceOrientationIsLandscape([[UIApplication sharedApplication] statusBarOrientation]) ? -self.contentViewInLandscapeOffsetCenterX : -self.contentViewInPortraitOffsetCenterX), self.contentViewContainer.center.y);
         
         self.contentViewContainer.layer.zPosition = 100;
         CGFloat minWidth = CGRectGetWidth(self.view.bounds) - cMinContentWidth;
         CGFloat ratio = minWidth / CGRectGetWidth(self.view.bounds);
-        CGFloat angle =  ratio * ((M_PI / 180) * 60);
+        CGFloat angle =  ratio * cMaxRotateAngel;
         CATransform3D translation = CATransform3DMakeTranslation(- minWidth, 0, 0);
         translation.m34 = - 1 / 700.f;
         
@@ -387,7 +366,7 @@ const CGFloat cMinContentWidth = 120.f;
             self.backgroundImageView.transform = CGAffineTransformIdentity;
         if (self.needBlurredImageEffect) {
             self.contentImageView.hidden = NO;
-            [self addContentBlurredImage:cMaxInradius];
+            [self addContentBlurredImage];
         }
     } completion:^(BOOL finished) {
         if (!self.rightMenuVisible && [self.delegate conformsToProtocol:@protocol(RESideMenuDelegate)] && [self.delegate respondsToSelector:@selector(sideMenu:didShowMenuViewController:)]) {
@@ -629,55 +608,10 @@ const CGFloat cMinContentWidth = 120.f;
 
         if (self.needBlurredImageEffect) {
             self.contentImageView.hidden = NO;
-            [self addContentBlurredImage:cMaxInradius];
+            [self addContentBlurredImage];
         }
     }
     else if (recognizer.state == UIGestureRecognizerStateChanged) {
-        /*
-        CGFloat delta = 0;
-        if (self.visible) {
-            delta = self.originalPoint.x != 0 ? (point.x + self.originalPoint.x) / self.originalPoint.x : 0;
-        } else {
-            delta = point.x / self.view.frame.size.width;
-        }
-        delta = MIN(fabs(delta), 1.6);
-        
-        CGFloat contentViewScale = self.scaleContentView ? 1 - ((1 - self.contentViewScaleValue) * delta) : 1;
-        
-        CGFloat backgroundViewScale = 1.7f - (0.7f * delta);
-        CGFloat menuViewScale = 1.5f - (0.5f * delta);
-
-        if (!self.bouncesHorizontally) {
-            contentViewScale = MAX(contentViewScale, self.contentViewScaleValue);
-            backgroundViewScale = MAX(backgroundViewScale, 1.0);
-            menuViewScale = MAX(menuViewScale, 1.0);
-        }
- 
-        self.menuViewContainer.alpha = delta;
-        
-        if (self.scaleBackgroundImageView) {
-            self.backgroundImageView.transform = CGAffineTransformMakeScale(backgroundViewScale, backgroundViewScale);
-        }
-        
-        if (self.scaleMenuView) {
-            self.menuViewContainer.transform = CGAffineTransformMakeScale(menuViewScale, menuViewScale);
-        }
-        
-        if (self.scaleBackgroundImageView) {
-            if (backgroundViewScale < 1) {
-                self.backgroundImageView.transform = CGAffineTransformIdentity;
-            }
-        }
-         */
-        
-//       if (!self.bouncesHorizontally && self.visible) {
-//           if (self.contentViewContainer.frame.origin.x > self.contentViewContainer.frame.size.width / 2.0)
-//               point.x = MIN(0.0, point.x);
-//           
-//            if (self.contentViewContainer.frame.origin.x < -(self.contentViewContainer.frame.size.width / 2.0))
-//                point.x = MAX(0.0, point.x);
-//        }
-        
         // Limit size
         //
         BOOL shouldChangeTransform = YES;
@@ -690,11 +624,11 @@ const CGFloat cMinContentWidth = 120.f;
                 contentAlpha = 1.0;
             }
             else {
-                if (fabsf(point.x) < minWidth) {
-                    contentAlpha = fabsf(point.x) / screenSize.width;
+                if (fabs(point.x) < minWidth) {
+                    contentAlpha = fabs(point.x) / screenSize.width;
                 }
                 else {
-                    contentAlpha = (fabsf(point.x) + minWidth) / screenSize.width;
+                    contentAlpha = (fabs(point.x) + minWidth) / screenSize.width;
                 }
             }
         } else {
@@ -703,11 +637,11 @@ const CGFloat cMinContentWidth = 120.f;
                 contentAlpha = 1.0;
             }
             else {
-                if (fabsf(point.x) < minWidth) {
-                    contentAlpha = fabsf(point.x) / screenSize.width;
+                if (fabs(point.x) < minWidth) {
+                    contentAlpha = fabs(point.x) / screenSize.width;
                 }
                 else {
-                    contentAlpha = (fabsf(point.x) + minWidth) / screenSize.width;
+                    contentAlpha = (fabs(point.x) + minWidth) / screenSize.width;
                 }
             }
         }
@@ -726,34 +660,7 @@ const CGFloat cMinContentWidth = 120.f;
             }
             self.didNotifyDelegate = YES;
         }
-       
-        
-//        if (contentViewScale > 1) {
-//            CGFloat oppositeScale = (1 - (contentViewScale - 1));
-//            self.contentViewContainer.transform = CGAffineTransformMakeScale(oppositeScale, oppositeScale);
-//            self.contentViewContainer.transform = CGAffineTransformTranslate(self.contentViewContainer.transform, point.x, 0);
-//        } else {
-//            self.contentViewContainer.transform = CGAffineTransformMakeScale(contentViewScale, contentViewScale);
-//            self.contentViewContainer.transform = CGAffineTransformTranslate(self.contentViewContainer.transform, point.x, 0);
-//        }
-        
-//        self.leftMenuViewController.view.hidden = self.contentViewContainer.frame.origin.x < 0;
-//        self.rightMenuViewController.view.hidden = self.contentViewContainer.frame.origin.x > 0;
- 
-//        if (!self.leftMenuViewController && self.contentViewContainer.frame.origin.x > 0) {
-//            self.contentViewContainer.transform = CGAffineTransformIdentity;
-//            self.contentViewContainer.frame = self.view.bounds;
-//            self.visible = NO;
-//            self.leftMenuVisible = NO;
-//
-//        } else  if (!self.rightMenuViewController && self.contentViewContainer.frame.origin.x < 0) {
-//            self.contentViewContainer.transform = CGAffineTransformIdentity;
-//            self.contentViewContainer.frame = self.view.bounds;
-//            self.visible = NO;
-//            self.rightMenuVisible = NO;
-//        }
-        
-//        NSLog(@"contentFrame:%@", NSStringFromCGRect(self.contentViewContainer.frame));
+
         CGFloat maxContentX = CGRectGetWidth(self.view.bounds) - cMinContentWidth;
         CGFloat translationX = point.x;
         CGFloat m43Sign = 1;
@@ -766,14 +673,14 @@ const CGFloat cMinContentWidth = 120.f;
                     contentAlpha = 1.0;
                 }
                 else {
-                    translationX = maxContentX - fabsf(point.x);
-                    if (fabsf(point.x) > minWidth) {
+                    translationX = maxContentX - fabs(point.x);
+                    if (fabs(point.x) > minWidth) {
                         contentAlpha = translationX / screenSize.width;
                     }
                     else {
                         contentAlpha = (translationX + minWidth)/ screenSize.width;
                     }
-                    delta = fabsf(translationX) / (screenSize.width - minWidth);
+                    delta = fabs(translationX) / (screenSize.width - minWidth);
  
                 }
                 m43Sign = 1;
@@ -784,14 +691,14 @@ const CGFloat cMinContentWidth = 120.f;
                     contentAlpha = 1.0;
                 }
                 else {
-                    translationX = - maxContentX + fabsf(point.x);
-                    if (fabsf(point.x) > minWidth) {
-                        contentAlpha = fabsf(translationX)  / screenSize.width;
+                    translationX = - maxContentX + fabs(point.x);
+                    if (fabs(point.x) > minWidth) {
+                        contentAlpha = fabs(translationX)  / screenSize.width;
                     }
                     else {
-                        contentAlpha = (fabsf(translationX) + minWidth) / screenSize.width;
+                        contentAlpha = (fabs(translationX) + minWidth) / screenSize.width;
                     }
-                    delta = fabsf(translationX) / (screenSize.width - minWidth);
+                    delta = fabs(translationX) / (screenSize.width - minWidth);
 
                 }
                 m43Sign = - 1;
@@ -815,10 +722,10 @@ const CGFloat cMinContentWidth = 120.f;
             else {
                 m43Sign = 1;
             }
-            delta = fabsf(point.x) / (screenSize.width - minWidth);
+            delta = fabs(point.x) / (screenSize.width - minWidth);
         }
         
-        if (fabsf(translationX) > screenSize.width) {
+        if (fabs(translationX) > screenSize.width) {
             if (translationX < 0) {
                 translationX = - screenSize.width;
             }
@@ -862,9 +769,9 @@ const CGFloat cMinContentWidth = 120.f;
         
         //change transfor3D
         if (shouldChangeTransform) {
-            CGFloat blurWidth = fabsf(translationX);
+            CGFloat blurWidth = fabs(translationX);
             CGFloat ratio = blurWidth / self.view.frame.size.width;
-            CGFloat angle = ratio * ((M_PI / 180) * 60);
+            CGFloat angle = ratio * cMaxRotateAngel;
             
 //            NSLog(@"point:%@ angle:%f scaleY:%f, transX:%f", NSStringFromCGPoint(point), angle, contentViewScale, translationX);
             
@@ -883,7 +790,7 @@ const CGFloat cMinContentWidth = 120.f;
     }
     else if (recognizer.state == UIGestureRecognizerStateEnded) {
         self.didNotifyDelegate = NO;
-//        return;//todo
+        
         if (self.panMinimumOpenThreshold > 0 && (
             (self.contentViewContainer.frame.origin.x < 0 && self.contentViewContainer.frame.origin.x > -((NSInteger)self.panMinimumOpenThreshold)) ||
             (self.contentViewContainer.frame.origin.x > 0 && self.contentViewContainer.frame.origin.x < self.panMinimumOpenThreshold))
@@ -937,10 +844,6 @@ const CGFloat cMinContentWidth = 120.f;
 
 - (void)setContentViewController:(UIViewController *)contentViewController
 {
-    if (!_contentViewController) {
-        _contentViewController = contentViewController;
-        return;
-    }
     [self __hideViewController:_contentViewController];
     _contentViewController = contentViewController;
     
@@ -958,10 +861,6 @@ const CGFloat cMinContentWidth = 120.f;
 
 - (void)setLeftMenuViewController:(UIViewController *)leftMenuViewController
 {
-    if (!_leftMenuViewController) {
-        _leftMenuViewController = leftMenuViewController;
-        return;
-    }
     [self __hideViewController:_leftMenuViewController];
     _leftMenuViewController = leftMenuViewController;
    
@@ -977,10 +876,6 @@ const CGFloat cMinContentWidth = 120.f;
 
 - (void)setRightMenuViewController:(UIViewController *)rightMenuViewController
 {
-    if (!_rightMenuViewController) {
-        _rightMenuViewController = rightMenuViewController;
-        return;
-    }
     [self __hideViewController:_rightMenuViewController];
     _rightMenuViewController = rightMenuViewController;
     

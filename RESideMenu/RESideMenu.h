@@ -71,7 +71,7 @@
 - (void)presentRightMenuViewController;
 - (void)hideMenuViewController;
 - (void)setContentViewController:(UIViewController *)contentViewController animated:(BOOL)animated;
-- (void)addContentBlurredImage:(NSUInteger)blurRadius;
+- (void)addContentBlurredImage;
 
 @end
 
