@@ -28,10 +28,10 @@
 #import "RECommonFunctions.h"
 #import <UIImageEffects/UIImage+ImageEffects.h>
 
+const CGFloat cMaxRotateAngel = M_PI / 180 * 60; ///rotate angle for '_contentViewController' when side menu is open
 const NSUInteger cMaxInradius = 25;
-const NSUInteger cMinInradius = 1;
-const CGFloat cBlurDeltaFactor = 1.8;
-const CGFloat cMaxRotateAngel = M_PI / 180 * 60;
+//const NSUInteger cMinInradius = 1; // !unused
+//const CGFloat cBlurDeltaFactor = 1.8; // !unused
 const CGFloat cMinContentWidth = 120.f;
 
 @interface RESideMenu ()
@@ -313,7 +313,7 @@ const CGFloat cMinContentWidth = 120.f;
         
         CGFloat minWidth = CGRectGetWidth(self.view.bounds) - cMinContentWidth;
         CGFloat ratio = minWidth / CGRectGetWidth(self.view.bounds);
-        CGFloat angle = ratio * ((M_PI / 180) * 60);
+        CGFloat angle = ratio * cMaxRotateAngel;
         self.contentViewContainer.layer.zPosition = 100;
         
         CATransform3D translation = CATransform3DMakeTranslation(minWidth, 0, 0);
@@ -374,7 +374,7 @@ const CGFloat cMinContentWidth = 120.f;
         self.contentViewContainer.layer.zPosition = 100;
         CGFloat minWidth = CGRectGetWidth(self.view.bounds) - cMinContentWidth;
         CGFloat ratio = minWidth / CGRectGetWidth(self.view.bounds);
-        CGFloat angle =  ratio * ((M_PI / 180) * 60);
+        CGFloat angle =  ratio * cMaxRotateAngel;
         CATransform3D translation = CATransform3DMakeTranslation(- minWidth, 0, 0);
         translation.m34 = - 1 / 700.f;
         
